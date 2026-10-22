@@ -1,0 +1,19 @@
+/* filmmakers.marketing — servicios web, pauta e IA. Fondo azul noche con constelación cyan, como el sitio.
+   Reglas del usuario: el cyan #00F2FF es obligatorio; el rosa #FF007A solo se usa en «Servicios premium»;
+   nada de fondos gris carbón. Fuentes provisionales (no se pudo leer el CSS del sitio): ajustar si no coinciden. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+:root{
+  --fondo:#03060E; --fondo-2:#071631;
+  --texto:#F2FBFF; --texto-suave:#A3B8CC;
+  --acento:#00F2FF; --acento-2:#8AF9FF; --sobre-acento:#021019;
+  --premium:#FF007A;
+  --superficie:#0B1A31; --superficie-texto:#F2FBFF;
+  --panel:#060F21; --panel-2:#0D1E3A; --panel-texto:#EAF8FF; --panel-suave:#7F95AD;
+  --linea:#123250; --ok:#00A3B0; --ok-claro:#00F2FF;
+  --fuente-titulo:'Space Grotesk',sans-serif; --peso-titulo:700; --tracking-titulo:-.035em;
+  --fuente-texto:'Inter',sans-serif;
+  --fuente-impacto:'Space Grotesk',sans-serif; --peso-impacto:700; --mayus-impacto:none; --tracking-impacto:-.035em;
+  --fuente-mono:'JetBrains Mono',monospace;
+  --sombra:0 18px 50px rgba(0,0,0,.5); --sombra-fuerte:0 40px 110px rgba(0,0,0,.7);
+  --subs-fondo:rgba(3,6,14,.85); --subs-texto:#F2FBFF;
+}
