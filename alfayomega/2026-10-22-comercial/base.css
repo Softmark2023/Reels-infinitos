@@ -1,0 +1,231 @@
+/* Reels Infinitos · base.css
+   Lienzo 1080×1920, escenas, entradas y componentes. Aquí no van colores ni fuentes de marca:
+   todo sale de las variables de marca.css (--fondo, --texto, --acento, --fuente-titulo…),
+   así la misma plantilla sirve para cualquier marca. */
+
+*{box-sizing:border-box;margin:0;padding:0}
+/* --d = momento en que entra el elemento: inicio de su escena (--in) + su retraso (--t / data-t) */
+*{--d:calc(var(--in, 0s) + var(--t, 0s))}
+:root{
+  --suave:cubic-bezier(.2,.9,.25,1); --rebote:cubic-bezier(.3,1.5,.5,1); --firme:cubic-bezier(.6,0,.2,1);
+  --sombra:0 14px 40px rgba(0,0,0,.12); --sombra-fuerte:0 40px 90px rgba(0,0,0,.28);
+  --radio:28px;
+}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--fondo)}
+body{font-family:var(--fuente-texto);color:var(--texto);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+#reel{position:relative;width:1080px;height:1920px;overflow:hidden;isolation:isolate;
+  background:var(--fondo-reel, radial-gradient(120% 80% at 50% 22%, var(--fondo) 0%, var(--fondo) 45%, var(--fondo-2) 100%))}
+img,video,svg{display:block}
+ul,ol{list-style:none}
+
+/* Vista previa (el motor pone .vista al abrir reel.html directo; al grabar no aplica) */
+html.vista,html.vista body{width:100%;height:100%;background:#141414}
+html.vista #reel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(var(--escala,.45))}
+html.midiendo *{animation:none!important}
+.hud{position:fixed;left:10px;bottom:10px;z-index:9999;font:600 13px/1.4 system-ui,sans-serif;color:#fff;background:rgba(0,0,0,.75);padding:7px 12px;border-radius:8px}
+
+/* ================= Escenas ================= */
+.escena{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;text-align:center;isolation:isolate;
+  padding:var(--arriba,500px) 90px 0;
+  animation:escena-entra .35s ease-out var(--in) both, escena-sale .35s ease-in var(--out) forwards}
+.escena.centro{justify-content:center;padding-top:0;padding-bottom:var(--abajo,360px)}
+.escena[data-transicion=zoom]{animation-name:zoom-entra,zoom-sale}
+.escena[data-transicion=barrido]{animation-name:barrido-entra,barrido-sale;animation-duration:.5s,.4s}
+.escena[data-transicion=corte]{animation-duration:.01s,.01s}
+@keyframes escena-entra{from{opacity:0}to{opacity:1}}
+@keyframes escena-sale{from{opacity:1}to{opacity:0;transform:translateY(-30px)}}
+@keyframes zoom-entra{from{opacity:0;transform:scale(1.08)}to{opacity:1;transform:none}}
+@keyframes zoom-sale{from{opacity:1}to{opacity:0;transform:scale(.94)}}
+@keyframes barrido-entra{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}
+@keyframes barrido-sale{from{clip-path:inset(0)}to{clip-path:inset(0 0 0 100%)}}
+
+/* ================= Entradas (usar con data-t="segundos desde que empieza la escena") ================= */
+.w{display:inline-block;animation:e-palabra var(--dur,.55s) var(--suave) var(--d) both}
+.sube{animation:e-sube var(--dur,.65s) var(--suave) var(--d) both}
+.baja{animation:e-baja var(--dur,.65s) var(--suave) var(--d) both}
+.pop{animation:e-pop var(--dur,.5s) var(--rebote) var(--d) both}
+.aparece{animation:e-aparece var(--dur,.6s) ease-out var(--d) both}
+.zoom{animation:e-zoom var(--dur,.8s) var(--suave) var(--d) both}
+.izq{animation:e-izq var(--dur,.6s) var(--suave) var(--d) both}
+.der{animation:e-der var(--dur,.6s) var(--suave) var(--d) both}
+.sello{animation:e-sello var(--dur,.55s) var(--rebote) var(--d) both}
+.crece{transform-origin:bottom;animation:e-crece var(--dur,.8s) var(--suave) var(--d) both}
+.crece-x{transform-origin:left;animation:e-crece-x var(--dur,.8s) var(--suave) var(--d) both}
+/* continuas (ponerlas en un envoltorio si el elemento ya tiene una entrada) */
+.flota{animation:e-flota 2.6s ease-in-out var(--d) infinite alternate}
+.late{animation:e-late 1.3s ease-in-out var(--d) infinite}
+.kenburns{animation:e-kenburns calc(var(--dura,4s) + .4s) linear var(--in,0s) both}
+/* salida antes de que acabe la escena: envoltorio con data-s="segundos" */
+.sale{animation:e-sale .35s ease-in calc(var(--in,0s) + var(--s,0s)) forwards}
+/* variantes de data-palabras */
+[data-efecto=pop] .w{animation-name:e-pop;animation-timing-function:var(--rebote)}
+[data-efecto=sube] .w{animation-name:e-sube}
+[data-efecto=seco] .w{animation-name:e-aparece;animation-duration:.01s}
+
+@keyframes e-palabra{from{opacity:0;transform:translateY(.35em);filter:blur(10px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes e-sube{from{opacity:0;transform:translateY(70px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes e-baja{from{opacity:0;transform:translateY(-70px)}to{opacity:1;transform:none}}
+@keyframes e-pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@keyframes e-aparece{from{opacity:0}to{opacity:1}}
+@keyframes e-zoom{from{opacity:0;transform:scale(1.18);filter:blur(12px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes e-izq{from{opacity:0;transform:translateX(-90px)}to{opacity:1;transform:none}}
+@keyframes e-der{from{opacity:0;transform:translateX(90px)}to{opacity:1;transform:none}}
+@keyframes e-sello{from{opacity:0;transform:rotate(-14deg) scale(1.9)}to{opacity:1;transform:rotate(var(--giro,-4deg))}}
+@keyframes e-crece{from{transform:scaleY(0)}to{transform:none}}
+@keyframes e-crece-x{from{transform:scaleX(0)}to{transform:none}}
+@keyframes e-flota{from{transform:translateY(-12px)}to{transform:translateY(12px)}}
+@keyframes e-late{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes e-kenburns{from{transform:scale(1.02)}to{transform:scale(1.14)}}
+@keyframes e-sale{to{opacity:0;transform:translateY(-24px);filter:blur(6px)}}
+@keyframes e-parpadeo{50%{opacity:0}}
+
+/* ================= Texto ================= */
+.antetitulo{font-family:var(--fuente-texto);font-weight:800;font-size:32px;letter-spacing:.3em;text-transform:uppercase;color:var(--texto-suave);margin-bottom:24px}
+.titulo{font-family:var(--fuente-titulo);font-weight:var(--peso-titulo,800);font-style:var(--estilo-titulo,normal);font-size:108px;line-height:1.05;
+  letter-spacing:var(--tracking-titulo,-.03em);color:var(--texto);text-wrap:balance}
+.titulo.mediano{font-size:82px}
+.titulo.grande{font-size:140px}
+.gigante{display:block;font-size:220px;line-height:.95;letter-spacing:-.04em}
+.texto{font-size:46px;line-height:1.3;font-weight:600;color:var(--texto-suave);text-wrap:balance;margin-top:28px}
+.acento{color:var(--acento)}
+.acento-2{color:var(--acento-2)}
+.tenue{color:var(--texto-suave)}
+.resalta{position:relative;z-index:0;white-space:nowrap}
+.resalta::before{content:"";position:absolute;left:-.08em;right:-.08em;bottom:.08em;height:.4em;background:var(--acento);opacity:.3;z-index:-1;
+  transform-origin:left;animation:e-crece-x .5s var(--firme) calc(var(--d) + .35s) both}
+.subraya{width:440px;height:14px;border-radius:7px;background:var(--acento);margin:22px auto 0;transform-origin:left;animation:e-crece-x .5s var(--firme) var(--d) both}
+.tacha{position:relative;display:inline-block}
+.tacha::after{content:"";position:absolute;left:-4%;right:-4%;top:52%;height:.12em;border-radius:.06em;background:currentColor;transform-origin:left;
+  animation:e-crece-x .35s ease-out calc(var(--d) + .45s) both}
+.cifra{font-family:var(--fuente-titulo);font-weight:900;font-size:220px;line-height:1;letter-spacing:-.04em;color:var(--acento);font-variant-numeric:tabular-nums}
+.impacto{font-family:var(--fuente-impacto);font-weight:var(--peso-impacto,900);font-style:var(--estilo-impacto,normal);text-transform:var(--mayus-impacto,uppercase);
+  font-size:150px;line-height:1;letter-spacing:var(--tracking-impacto,0)}
+.etiqueta-acento{display:inline-block;background:var(--acento);color:var(--sobre-acento);padding:.06em .22em .12em;border-radius:24px;
+  box-shadow:0 18px 40px color-mix(in srgb,var(--acento) 35%,transparent)}
+
+/* ================= Piezas ================= */
+.chips{display:flex;flex-direction:column;align-items:center;gap:22px;margin-top:70px}
+.chips.fila{flex-direction:row;flex-wrap:wrap;justify-content:center}
+.chip{display:inline-flex;align-items:center;gap:16px;background:var(--superficie);color:var(--superficie-texto,var(--texto));
+  border-radius:999px;padding:18px 34px 18px 22px;font-size:40px;font-weight:700;box-shadow:var(--sombra)}
+.ok,.no{flex:none;width:40px;height:40px;border-radius:50%;background:var(--ok);display:inline-grid;place-items:center}
+.ok::after{content:"";width:9px;height:18px;border:solid #fff;border-width:0 5px 5px 0;transform:translateY(-2px) rotate(45deg)}
+.no{background:var(--error,#D64545);position:relative}
+.no::before,.no::after{content:"";position:absolute;width:20px;height:5px;border-radius:3px;background:#fff;transform:rotate(45deg)}
+.no::after{transform:rotate(-45deg)}
+.icono{width:150px;height:150px;border-radius:50%;background:var(--acento);color:var(--sobre-acento);display:grid;place-items:center;
+  font:900 96px/1 var(--fuente-titulo);box-shadow:0 18px 40px color-mix(in srgb,var(--acento) 35%,transparent);margin-bottom:44px}
+
+.lista{display:flex;flex-direction:column;gap:24px;margin-top:60px;width:100%;text-align:left}
+.lista li{display:flex;align-items:center;gap:26px;background:var(--superficie);color:var(--superficie-texto,var(--texto));border-radius:var(--radio);
+  padding:30px 36px;font-size:44px;font-weight:700;line-height:1.2;box-shadow:var(--sombra)}
+.lista .num{flex:none;width:68px;height:68px;border-radius:50%;background:var(--acento);color:var(--sobre-acento);display:grid;place-items:center;font:800 36px/1 var(--fuente-titulo)}
+
+/* Cifras con etiqueta (inventario, resultados): <div class="fila izq" data-t><strong data-contar>…</strong><span>etiqueta</span></div> */
+.cifras{display:flex;flex-direction:column;gap:28px;width:100%;margin-top:50px}
+.cifras .fila{display:flex;align-items:center;gap:36px;background:var(--superficie);color:var(--superficie-texto,var(--texto));border-radius:var(--radio);
+  padding:24px 44px;box-shadow:var(--sombra);text-align:left}
+.cifras strong{flex:none;min-width:250px;font-family:var(--fuente-titulo);font-weight:900;font-size:118px;line-height:1;letter-spacing:-.03em;
+  color:var(--acento);font-variant-numeric:tabular-nums}
+.cifras span{font-size:48px;font-weight:700;line-height:1.1}
+
+.tarjeta{background:var(--superficie);color:var(--superficie-texto,var(--texto));border-radius:var(--radio);padding:44px;box-shadow:var(--sombra);width:100%;text-align:left}
+
+/* Ventana tipo app (código, estadísticas, comparativas) */
+.ventana{width:900px;background:var(--panel);color:var(--panel-texto);border-radius:36px;overflow:hidden;text-align:left;box-shadow:var(--sombra-fuerte)}
+.ventana .cabeza{position:relative;height:72px;background:var(--panel-2);display:flex;align-items:center;gap:12px;padding:0 28px}
+.ventana .cabeza b{width:18px;height:18px;border-radius:50%;background:#FF5F57}
+.ventana .cabeza b:nth-child(2){background:#FEBC2E}
+.ventana .cabeza b:nth-child(3){background:#28C840}
+.ventana .cabeza span{position:absolute;inset:0;display:grid;place-items:center;color:var(--panel-suave);font-size:26px;font-weight:600}
+.ventana .cuerpo{padding:36px}
+.codigo{font-family:var(--fuente-mono);font-size:38px;line-height:1.6;white-space:pre;padding:40px 46px}
+.codigo .k{color:var(--codigo-1,#E8835E)} .codigo .a{color:var(--codigo-2,#C9B7F0)} .codigo .s{color:var(--codigo-3,#9FD3A8)} .codigo .c{color:var(--panel-suave)}
+.cursor{display:inline-block;width:0;position:relative}
+.cursor::after{content:"";position:absolute;left:3px;top:-.92em;width:.5em;height:1.12em;background:var(--acento);animation:e-parpadeo 1s steps(1) infinite}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.kpi{background:var(--panel-2);border-radius:22px;padding:24px 28px}
+.kpi small,.grafica small{display:block;color:var(--panel-suave);font-size:26px;font-weight:600}
+.kpi strong{display:block;font-family:var(--fuente-titulo);font-size:76px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.grafica{position:relative;background:var(--panel-2);border-radius:22px;padding:24px 28px 18px;margin-top:22px}
+.grafica .tendencia{position:absolute;top:22px;right:28px;color:var(--ok-claro,var(--ok));font-size:28px;font-weight:700}
+.grafica svg{width:100%;height:auto;margin-top:16px;overflow:visible}
+.linea-dato{fill:none;stroke:var(--acento);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.area-dato{opacity:0}
+.guia{stroke:var(--panel-suave);stroke-opacity:.25;stroke-width:2}
+.punto{fill:var(--panel-texto);stroke:var(--acento);stroke-width:5;opacity:0}
+.s1{stop-color:var(--acento);stop-opacity:.55} .s2{stop-color:var(--acento);stop-opacity:0}
+
+/* Barras comparativas: style="height:40%" en cada .bar */
+.barras{display:flex;align-items:flex-end;justify-content:center;gap:56px;height:600px;width:100%;margin-top:50px}
+.barras .col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:20px;width:250px;height:100%}
+.barras .bar{width:100%;border-radius:22px 22px 10px 10px;background:color-mix(in srgb,currentColor 30%,transparent)}
+.barras .bar.tuyo{background:var(--acento);box-shadow:0 0 60px color-mix(in srgb,var(--acento) 45%,transparent)}
+.barras .col span{font-size:34px;font-weight:700;line-height:1.15}
+
+/* Teléfono con foto o video dentro */
+.telefono{position:relative;width:520px;aspect-ratio:9/19.5;border-radius:72px;background:#0B0B0C;padding:16px;box-shadow:var(--sombra-fuerte)}
+.telefono>img,.telefono>video,.telefono>.pantalla{width:100%;height:100%;border-radius:58px;object-fit:cover;overflow:hidden}
+.telefono::before{content:"";position:absolute;top:34px;left:50%;translate:-50% 0;width:150px;height:42px;border-radius:21px;background:#0B0B0C;z-index:2}
+
+/* Foto o video de fondo a pantalla completa (dentro de la escena) */
+.foto{position:absolute;inset:0;overflow:hidden;z-index:-1}
+.foto img,.foto video{width:100%;height:100%;object-fit:cover}
+.foto::after{content:"";position:absolute;inset:0;background:var(--velo,linear-gradient(180deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,.05) 35%,rgba(0,0,0,.7) 100%))}
+.sobre-foto,.sobre-foto .titulo,.sobre-foto .texto{color:#fff}
+.sobre-foto .titulo{text-shadow:0 4px 30px rgba(0,0,0,.35)}
+
+/* Leyenda tipo recuadro (texto de apoyo abajo, dentro de zona segura) */
+.leyenda{position:absolute;left:90px;right:90px;top:var(--leyenda-y,1290px);background:var(--superficie);color:var(--superficie-texto,var(--texto));
+  border-radius:26px;padding:28px 40px;font-size:44px;font-weight:700;line-height:1.2;text-align:center;box-shadow:var(--sombra)}
+.leyenda b{color:var(--acento)}
+
+/* Llamado a la acción */
+.cta{display:flex;align-items:center;justify-content:center;gap:10px 26px;flex-wrap:wrap}
+.comentario{display:flex;align-items:center;gap:20px;width:900px;margin-top:70px;background:var(--superficie);color:var(--superficie-texto,var(--texto));
+  border-radius:999px;padding:26px 40px;font-size:42px;font-weight:800;box-shadow:var(--sombra);text-align:left}
+.comentario svg{width:44px;height:44px;fill:none;stroke:currentColor;stroke-width:2.4}
+.comentario em{margin-left:auto;font-style:normal;color:#1877F2;font-weight:700}
+.respuesta{width:900px;margin-top:24px;background:var(--superficie);color:var(--superficie-texto,var(--texto));border-radius:30px;padding:30px 40px;
+  box-shadow:var(--sombra);font-size:38px;font-weight:700;display:flex;flex-direction:column;gap:16px;text-align:left}
+.respuesta>div{display:flex;align-items:center;gap:16px}
+.whatsapp{display:inline-flex;align-items:center;gap:18px;margin-top:60px;background:#25D366;color:#fff;border-radius:999px;padding:24px 44px;font-size:44px;font-weight:800;box-shadow:0 18px 40px rgba(37,211,102,.35)}
+.whatsapp svg{width:52px;height:52px;fill:#fff}
+
+/* Marca */
+.cuenta{position:absolute;top:150px;left:50%;translate:-50% 0;z-index:5;display:flex;align-items:center;gap:14px;
+  background:color-mix(in srgb,var(--texto) 78%,transparent);color:var(--fondo);font-size:28px;font-weight:600;padding:10px 28px 10px 10px;border-radius:999px;white-space:nowrap}
+.cuenta img{width:54px;height:54px;border-radius:50%;object-fit:contain;background:var(--superficie);padding:6px}
+.logo-final{max-width:620px;max-height:380px;width:auto;height:auto;object-fit:contain}
+.dominio{margin-top:44px;font-size:40px;font-weight:700;color:var(--texto-suave);letter-spacing:.04em}
+
+/* Fondos decorativos (van debajo de las escenas) */
+.decor{position:absolute;inset:0;pointer-events:none;z-index:-1}
+.ciudad{position:absolute;left:0;bottom:120px;width:1080px;height:360px}
+.ciudad path{fill:none;stroke:var(--linea);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.rejilla{background-image:linear-gradient(var(--linea) 2px,transparent 2px),linear-gradient(90deg,var(--linea) 2px,transparent 2px);background-size:90px 90px;
+  opacity:.45;-webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 40%,#000 25%,transparent 80%);mask-image:radial-gradient(ellipse 70% 55% at 50% 40%,#000 25%,transparent 80%)}
+.puntos{background-image:radial-gradient(var(--linea) 3px,transparent 3.5px);background-size:46px 46px;opacity:.7;
+  -webkit-mask-image:radial-gradient(ellipse 75% 60% at 50% 40%,#000 20%,transparent 80%);mask-image:radial-gradient(ellipse 75% 60% at 50% 40%,#000 20%,transparent 80%)}
+.halo{position:absolute;left:50%;top:var(--halo-y,700px);width:1000px;height:1000px;translate:-50% -50%;border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--acento) 28%,transparent) 0%,transparent 62%)}
+
+/* Subtítulos de la voz en off (#subtitulos; los llena el motor) */
+.subs{position:absolute;left:70px;right:70px;top:var(--subs-y,1170px);z-index:20;display:flex;justify-content:center;text-align:center;pointer-events:none}
+.subs .bloque{display:none;max-width:100%;font-family:var(--fuente-titulo);font-weight:800;font-size:60px;line-height:1.18;
+  color:var(--subs-texto,var(--texto));background:var(--subs-fondo,var(--superficie));padding:16px 32px 20px;border-radius:24px;box-shadow:var(--sombra)}
+.subs .bloque.ver{display:inline-block}
+.subs .sp{opacity:.45}
+.subs .sp.dicha{opacity:1}
+.subs .sp.activa{color:var(--subs-activa,var(--acento))}
+.subs[data-estilo=grande] .bloque{background:none;box-shadow:none;font-size:84px;text-transform:uppercase;color:#fff;
+  text-shadow:0 5px 0 rgba(0,0,0,.45),0 0 28px rgba(0,0,0,.55)}
+.subs[data-estilo=grande] .sp{opacity:1}
+.subs[data-estilo=grande] .sp.activa{color:var(--subs-activa,var(--acento))}
+
+.progreso{position:absolute;left:0;top:0;width:100%;height:10px;background:var(--acento);transform-origin:left;transform:scaleX(0);z-index:30}
+
+/* Guías de zonas seguras (?guias=1 o tecla G) */
+.guias{position:absolute;inset:0;z-index:999;pointer-events:none;font:700 26px system-ui,sans-serif;color:#fff}
+.guias div{position:absolute;display:flex;align-items:center;justify-content:center;background:rgba(255,0,60,.22);outline:3px dashed rgba(255,0,60,.85);text-shadow:0 2px 6px #000}
+.guias .pauta{height:0;background:none;outline:3px dashed #FFC400;align-items:flex-end}

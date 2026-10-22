@@ -1,0 +1,17 @@
+/* Universidad Alfa y Omega (universidadalfayomega.edu.mx) — colores oficiales: verde #00DF00 y verde azulado #01313D.
+   Fuentes provisionales: no se pudo leer el CSS del sitio; ajustar cuando se vea. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+:root{
+  --fondo:#01313D; --fondo-2:#012029;
+  --texto:#F3FBF6; --texto-suave:#A9C7C9;
+  --acento:#00DF00; --acento-2:#7CF27C; --sobre-acento:#01313D;
+  --superficie:#06404D; --superficie-texto:#F3FBF6;
+  --panel:#012029; --panel-2:#063A46; --panel-texto:#EAF7F2; --panel-suave:#86A8AA;
+  --linea:#0B4A57; --ok:#00A300; --ok-claro:#00DF00;
+  --fuente-titulo:'Montserrat',sans-serif; --peso-titulo:800; --tracking-titulo:-.025em;
+  --fuente-texto:'Inter',sans-serif;
+  --fuente-impacto:'Montserrat',sans-serif; --peso-impacto:900;
+  --fuente-mono:'JetBrains Mono',monospace;
+  --sombra:0 18px 50px rgba(0,0,0,.4); --sombra-fuerte:0 40px 100px rgba(0,0,0,.55);
+  --subs-fondo:rgba(1,32,41,.88); --subs-texto:#F3FBF6;
+}
